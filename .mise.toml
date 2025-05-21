@@ -1,0 +1,6 @@
+[tools]
+helm = 'latest'
+node = 'latest'
+bun = 'latest'
+kustomize = 'latest'
+flux2 = '2.5.1'

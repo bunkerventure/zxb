@@ -1,0 +1,17 @@
+#!/bin/sh
+if [ "$1" = "reinstall" ]; then
+    export ZXB_REINSTALL=true    
+fi
+
+dir="$(dirname "$0")"
+set -e
+cd "$dir"
+if [ ! -f "$dir/.zxb/.runtime" ] || [ "$ZXB_REINSTALL" = "true" ]; then
+    if [ -d "$ZXB_LOCAL" ]; then
+        cat "$ZXB_LOCAL/install.sh" | sh -
+    else
+        curl https://raw.githubusercontent.com/bunkerventure/zxb/main/install.sh | sh -
+    fi
+fi
+
+sh "$dir/.zxb/.runtime/zxb" "$@"

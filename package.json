@@ -1,0 +1,16 @@
+{
+  "name": "k8s-apps-cluster",
+  "version": "0.1.0",
+  "description": "Build tooling",
+  "main": "index.js",
+  "scripts": {},
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-node": "^10.9.1",
+    "zx": "^7.2.3"
+  },
+  "dependencies": {
+    "minimist": "^1.2.8"
+  }
+}
