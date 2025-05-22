@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mkdir -p .zxb/.runtime
+mkdir -p .zxb
 
 if [ -d ".zxb/.runtime" ] && [ "$ZXB_REINSTALL" != "true" ]; then
     echo "ZXB_REINSTALL: $ZXB_REINSTALL"
