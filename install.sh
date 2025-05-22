@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Exit on error, print commands as they execute
+set -e
+set -x
 mkdir -p .zxb
 
 if [ -d ".zxb/.runtime" ] && [ "$ZXB_REINSTALL" != "true" ]; then
@@ -31,17 +34,41 @@ else
 fi
 
 echo "Updating zxb entry point"
-# Ensure we can copy the entry point files
+
+# Print debug information
+echo "DEBUG: Current directory: $(pwd)"
+echo "DEBUG: Contents of .zxb/.runtime:"
+ls -la .zxb/.runtime
+
 if [ -f ".zxb/.runtime/zxb-entry" ]; then
-  cp .zxb/.runtime/zxb-entry ./zxb && echo "Successfully copied zxb-entry to ./zxb"
+  # Force the copy to be verbose
+  cp -v .zxb/.runtime/zxb-entry ./zxb
+  COPY_RESULT=$?
+  echo "DEBUG: Copy result code: $COPY_RESULT"
+  
+  if [ $COPY_RESULT -eq 0 ]; then
+    echo "Successfully copied zxb-entry to ./zxb"
+    # Verify the file exists and show its permissions
+    ls -la ./zxb
+  else
+    echo "Error: Failed to copy zxb-entry to ./zxb"
+  fi
 else
   echo "Error: zxb-entry not found in .zxb/.runtime/"
   exit 1
 fi
 
-# Copy gitignore template
+# Copy gitignore template - also with debugging
 if [ -f ".zxb/.runtime/.gitignore.runtime-template" ]; then
-  cp .zxb/.runtime/.gitignore.runtime-template .zxb/.runtime/.gitignore && echo "Successfully copied gitignore template"
+  cp -v .zxb/.runtime/.gitignore.runtime-template .zxb/.runtime/.gitignore
+  COPY_RESULT=$?
+  echo "DEBUG: Gitignore copy result code: $COPY_RESULT"
+  
+  if [ $COPY_RESULT -eq 0 ]; then
+    echo "Successfully copied gitignore template"
+  else
+    echo "Error: Failed to copy gitignore template"
+  fi
 else
   echo "Warning: .gitignore.runtime-template not found"
 fi
