@@ -1,4 +1,5 @@
 #!/bin/sh
 cd "$(dirname "$0")"
-mise install
+mise install --quiet
+eval "$(mise activate bash)"
 bun run "./src/zxb.ts" $@
