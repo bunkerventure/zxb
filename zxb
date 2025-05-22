@@ -1,5 +1,0 @@
-#!/bin/sh
-cd "$(dirname "$0")"
-mise install --quiet
-eval "$(mise activate bash)"
-bun run --install=auto "./src/zxb.ts" $@

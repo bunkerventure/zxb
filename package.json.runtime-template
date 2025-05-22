@@ -1,0 +1,11 @@
+{
+  "name": "zxb-local",
+  "version": "0.1.0",
+  "description": "zxb local package definition",
+  "scripts": {},
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "zxb": "file:./.runtime"
+  }
+}

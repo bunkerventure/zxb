@@ -42,4 +42,13 @@ echo "Successfully copied zxb-entry to ./zxb"
 cp .zxb/.runtime/.gitignore.runtime-template .zxb/.gitignore
 echo "Successfully copied gitignore template"
 
+cp .zxb/.runtime/mise.toml .zxb/mise.toml
+echo "Successfully updated mise.toml"
+
+cp .zxb/.runtime/package.json.runtime-template .zxb/package.json
+echo "Successfully updated package.json"
+
+cp .zxb/.runtime/zxb.ts.runtime-template .zxb/zxb.ts
+echo "Successfully updated zxb.ts"
+
 echo "Installation completed successfully"

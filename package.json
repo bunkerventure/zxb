@@ -1,16 +1,14 @@
 {
-  "name": "k8s-apps-cluster",
+  "name": "zxb",
   "version": "0.1.0",
-  "description": "Build tooling",
-  "main": "index.js",
+  "description": "Build tooling based on zx",
+  "main": "src/zxb.ts",
   "scripts": {},
   "author": "",
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
+    "minimist": "^1.2.8",
     "ts-node": "^10.9.1",
     "zx": "^7.2.3"
-  },
-  "dependencies": {
-    "minimist": "^1.2.8"
   }
 }

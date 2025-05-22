@@ -1,0 +1,3 @@
+import zxb from "./.runtime/src/zxb.ts";
+
+zxb();

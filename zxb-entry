@@ -14,4 +14,7 @@ if [ ! -f "$dir/.zxb/.runtime" ] || [ "$ZXB_REINSTALL" = "true" ]; then
     fi
 fi
 
-sh "$dir/.zxb/.runtime/zxb" "$@"
+cd "$dir/.zxb/"
+mise install --quiet
+eval "$(mise activate bash)"
+bun run --install=auto "./zxb.ts" "$@"
