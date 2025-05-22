@@ -31,5 +31,19 @@ else
 fi
 
 echo "Updating zxb entry point"
-cp .zxb/.runtime/zxb-entry ./zxb
-cp .zxb/.runtime/.gitignore.runtime-template .zxb/.runtime/.gitignore
+# Ensure we can copy the entry point files
+if [ -f ".zxb/.runtime/zxb-entry" ]; then
+  cp .zxb/.runtime/zxb-entry ./zxb && echo "Successfully copied zxb-entry to ./zxb"
+else
+  echo "Error: zxb-entry not found in .zxb/.runtime/"
+  exit 1
+fi
+
+# Copy gitignore template
+if [ -f ".zxb/.runtime/.gitignore.runtime-template" ]; then
+  cp .zxb/.runtime/.gitignore.runtime-template .zxb/.runtime/.gitignore && echo "Successfully copied gitignore template"
+else
+  echo "Warning: .gitignore.runtime-template not found"
+fi
+
+echo "Installation completed successfully"
