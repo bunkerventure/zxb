@@ -27,7 +27,11 @@ if [ -d "$ZXB_LOCAL" ]; then
     echo "Using local runtime"
     cp -r "$ZXB_LOCAL" .zxb/.runtime
 else
-    echo "Cloning repository"
+    echo "Cloning repository using HTTPS"
+    # Temporarily disable URL rewriting to ensure HTTPS is used
+    GIT_CONFIG_COUNT=1 \
+    GIT_CONFIG_KEY_0="url.git@github.com:.insteadOf" \
+    GIT_CONFIG_VALUE_0="none" \
     git clone "$HTTPS_URL" .zxb/.runtime --depth 1
 fi
 
