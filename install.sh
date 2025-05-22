@@ -35,33 +35,11 @@ else
     git clone "$HTTPS_URL" .zxb/.runtime --depth 1
 fi
 
-# Verify the runtime was cloned/copied successfully
-if [ ! -d ".zxb/.runtime" ]; then
-    echo "ERROR: Failed to clone or copy runtime"
-    exit 1
-fi
+cp .zxb/.runtime/zxb-entry ./zxb
+chmod +x ./zxb
+echo "Successfully copied zxb-entry to ./zxb"
 
-# Copy entry point file
-echo "Updating zxb entry point"
-if [ -f ".zxb/.runtime/zxb-entry" ]; then
-    # Create a temporary file first to ensure the copy works
-    cp -v .zxb/.runtime/zxb-entry ./zxb.tmp
-    # Move the temporary file to the final location
-    mv -v ./zxb.tmp ./zxb
-    # Make it executable
-    chmod +x ./zxb
-    echo "Successfully copied zxb-entry to ./zxb"
-else
-    echo "ERROR: zxb-entry not found in .zxb/.runtime/"
-    exit 1
-fi
-
-# Copy gitignore template
-if [ -f ".zxb/.runtime/.gitignore.runtime-template" ]; then
-    cp -v .zxb/.runtime/.gitignore.runtime-template .zxb/.runtime/.gitignore
-    echo "Successfully copied gitignore template"
-else
-    echo "WARNING: .gitignore.runtime-template not found"
-fi
+cp .zxb/.runtime/.gitignore.runtime-template .zxb/.gitignore
+echo "Successfully copied gitignore template"
 
 echo "Installation completed successfully"
