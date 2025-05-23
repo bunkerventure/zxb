@@ -1,6 +1,6 @@
 import { $, fs, question } from "zx";
 import { globby } from "globby";
-import { projectDir, isCI } from "../actions/variables.js";
+import { projectDir, isCI, runtimeDir } from "../actions/variables.js";
 import chalk from "chalk";
 import minimist from "minimist";
 import path from "path";
@@ -35,8 +35,104 @@ async function findFiles(glob: string): Promise<ActionFile[]> {
   });
 }
 
+async function findNodeModulesWithKeyword(keyword: string): Promise<string[]> {
+  // Find all node_modules directories
+  const nodeModulesPath = `${projectDir}/node_modules`;
+  if (!(await fs.pathExists(nodeModulesPath))) {
+    return [];
+  }
+
+  // Get all direct dependencies (directories in node_modules)
+  const moduleDirs = await fs.readdir(nodeModulesPath);
+  const actionModulePaths: string[] = [];
+
+  // Check each module for the keyword in package.json
+  for (const moduleDir of moduleDirs) {
+    // Skip hidden directories and files
+    if (moduleDir.startsWith(".")) continue;
+
+    // Skip scoped packages directory itself, but process its contents
+    if (moduleDir.startsWith("@")) {
+      const scopePath = path.join(nodeModulesPath, moduleDir);
+      const scopedModules = await fs.readdir(scopePath);
+
+      for (const scopedModule of scopedModules) {
+        const packageJsonPath = path.join(
+          scopePath,
+          scopedModule,
+          "package.json"
+        );
+        if (await fs.pathExists(packageJsonPath)) {
+          try {
+            const packageJson = JSON.parse(
+              await fs.readFile(packageJsonPath, "utf8")
+            );
+            if (
+              packageJson.keywords &&
+              packageJson.keywords.includes(keyword)
+            ) {
+              actionModulePaths.push(path.join(scopePath, scopedModule));
+            }
+          } catch (error) {
+            console.error(
+              `Error reading package.json for ${moduleDir}/${scopedModule}:`,
+              error
+            );
+          }
+        }
+      }
+      continue;
+    }
+
+    // Process regular packages
+    const packageJsonPath = path.join(
+      nodeModulesPath,
+      moduleDir,
+      "package.json"
+    );
+    if (await fs.pathExists(packageJsonPath)) {
+      try {
+        const packageJson = JSON.parse(
+          await fs.readFile(packageJsonPath, "utf8")
+        );
+        if (packageJson.keywords && packageJson.keywords.includes(keyword)) {
+          actionModulePaths.push(path.join(nodeModulesPath, moduleDir));
+        }
+      } catch (error) {
+        console.error(`Error reading package.json for ${moduleDir}:`, error);
+      }
+    }
+  }
+
+  return actionModulePaths;
+}
+
 export async function findActionPaths() {
-  return [`${projectDir}/.zxb`, `${projectDir}/.zxb/.runtime/actions`];
+  // Project-specific actions directory (in the .zxb subfolder of the project)
+  const projectActionsDir = path.join(projectDir, ".zxb");
+
+  // Find modules with the 'zxb-actions' keyword
+  const actionModules = await findNodeModulesWithKeyword("zxb-actions");
+
+  // Core zxb actions directory (from the installed or linked package)
+  const coreActionsPath = path.join(runtimeDir, "actions");
+
+  // Verify core actions path exists
+  const coreActionsExist = await fs.pathExists(coreActionsPath);
+  if (!coreActionsExist) {
+    console.warn(`Core zxb actions path does not exist: ${coreActionsPath}`);
+  }
+
+  // Action paths from other modules with the zxb-actions keyword
+  const pluginActionPaths = actionModules.map((modulePath) =>
+    path.join(modulePath, "actions")
+  );
+
+  // Return all action paths with priority order:
+  // 1. Project-specific actions (.zxb directory)
+  // 2. Core zxb actions (from the package)
+  // 3. Plugin actions (from other modules with zxb-actions keyword)
+  return [projectActionsDir, coreActionsPath, ...pluginActionPaths];
 }
 
 export async function findActions(): Promise<Array<ActionFile>> {
@@ -70,7 +166,7 @@ export async function listActionsOutput() {
   const actionPaths = await findActionPaths();
   return `Available actions are:${actions
     .map((x) => `\n - ${x.name} (${x.type})`)
-    .join("")}\n\nActions are found in:\n${actionPaths
+    .join("")}\n\nActions are found in:${actionPaths
     .map((x) => "\n- " + x)
     .join("")}\n`;
 }

@@ -6,6 +6,9 @@
   "scripts": {},
   "author": "",
   "license": "ISC",
+  "keywords": [
+    "zxb-actions"
+  ],
   "dependencies": {
     "minimist": "^1.2.8",
     "ts-node": "^10.9.1",

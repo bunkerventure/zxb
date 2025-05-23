@@ -6,6 +6,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "zxb": "file:./.runtime"
+    "zxb": "git+https://github.com/bunkerventure/zxb.git"
   }
 }

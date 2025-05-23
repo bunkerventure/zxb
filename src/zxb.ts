@@ -7,16 +7,22 @@ import {
   listActionsOutput,
 } from "./runtime.js";
 import minimist from "minimist";
+import { dev } from "./dev.js";
 
 async function main() {
   const argv = minimist(process.argv.slice(2));
+
+  if (argv._[0] === "dev") {
+    await dev(argv);
+    return;
+  }
 
   const actions = await findActions();
 
   const actionName = argv._[0];
   if (!actionName || !actions.find((x) => x.name === actionName)) {
     console.error(
-      `could not find action ${actionName}.\n\n${await listActionsOutput()}`
+      `Could not find action ${actionName}.\n\n${await listActionsOutput()}`
     );
     process.exit(1);
   }
@@ -26,9 +32,10 @@ async function main() {
   switch (actionFile?.type) {
     case "task":
       const task = await loadAction(actionFile);
-      if (task.module.run) {
-        await task.module.run();
+      if (!task.module.run) {
+        console.warn(`action ${actionName} has no exported run function`);
       }
+      await task.module.run();
       break;
     case "job":
       const job = await loadAction(actionFile);
