@@ -4,10 +4,14 @@ import { projectDir, runtimeDir } from "../actions/variables";
 
 export async function dev(argv: minimist.ParsedArgs) {
   switch (argv._[1]) {
+    case "update":
+      console.log("Updating zxb");
+      await $`npm install zxb@latest`;
+      break;
+
     case "link":
       console.log("Linking zxb");
       await $`npm link ${argv._.slice(2)}`;
-      //await $`npm list`;
       break;
 
     case "create-task":

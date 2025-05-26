@@ -123,16 +123,11 @@ export async function findActionPaths() {
     console.warn(`Core zxb actions path does not exist: ${coreActionsPath}`);
   }
 
-  // Action paths from other modules with the zxb-actions keyword
-  const pluginActionPaths = actionModules.map((modulePath) =>
-    path.join(modulePath, "actions")
-  );
-
   // Return all action paths with priority order:
   // 1. Project-specific actions (.zxb directory)
   // 2. Core zxb actions (from the package)
   // 3. Plugin actions (from other modules with zxb-actions keyword)
-  return [projectActionsDir, coreActionsPath, ...pluginActionPaths];
+  return [projectActionsDir, coreActionsPath, ...actionModules];
 }
 
 export async function findActions(): Promise<Array<ActionFile>> {
