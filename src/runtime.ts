@@ -37,13 +37,14 @@ async function findFiles(glob: string): Promise<ActionFile[]> {
 
 async function findNodeModulesWithKeyword(keyword: string): Promise<string[]> {
   // Find all node_modules directories
-  const nodeModulesPath = `${projectDir}/node_modules`;
+  const nodeModulesPath = `${projectDir}/.zxb/node_modules`;
   if (!(await fs.pathExists(nodeModulesPath))) {
     return [];
   }
 
   // Get all direct dependencies (directories in node_modules)
   const moduleDirs = await fs.readdir(nodeModulesPath);
+
   const actionModulePaths: string[] = [];
 
   // Check each module for the keyword in package.json
